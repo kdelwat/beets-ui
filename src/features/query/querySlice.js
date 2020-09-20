@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAlbums } from "../../api/api";
+import { getAlbums, getTracks } from "../../api/api";
 
 export const QueryType = {
     QUERY_ALBUMS: "QUERY_ALBUMS",
@@ -34,6 +34,10 @@ export const querySlice = createSlice({
         changeFilterString: (state, action) => {
             state.filterString = action.payload === "" ? null : action.payload;
         },
+        changeQueryType: (state, action) => {
+            state.queryType = action.payload;
+            state.results = [];
+        },
     },
 });
 
@@ -41,6 +45,7 @@ export const {
     resultsLoaded,
     loadError,
     changeFilterString,
+    changeQueryType,
 } = querySlice.actions;
 
 // Thunks
@@ -48,9 +53,16 @@ export const {
 export const fetchResults = () => {
     return async (dispatch, getState) => {
         try {
-            const albums = await getAlbums();
+            const state = getState();
 
-            dispatch(resultsLoaded(albums));
+            let results;
+            if (state.query.queryType === QueryType.QUERY_ALBUMS) {
+                results = await getAlbums();
+            } else {
+                results = await getTracks();
+            }
+
+            dispatch(resultsLoaded(results));
         } catch (err) {
             console.error(err);
 
@@ -74,5 +86,6 @@ export const selectResults = (state) =>
         : state.query.results;
 
 export const selectQueryState = (state) => state.query.queryState;
+export const selectQueryType = (state) => state.query.queryType;
 
 export default querySlice.reducer;
