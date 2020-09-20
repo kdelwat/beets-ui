@@ -19,6 +19,7 @@ export const querySlice = createSlice({
         queryState: { type: QueryState.LOADING },
         beetsQuery: "",
         results: [],
+        resultSelected: null,
         filterString: null,
     },
     reducers: {
@@ -42,6 +43,9 @@ export const querySlice = createSlice({
         changeBeetsQuery: (state, action) => {
             state.beetsQuery = action.payload;
         },
+        changeResultSelected: (state, action) => {
+            state.resultSelected = action.payload;
+        },
     },
 });
 
@@ -51,6 +55,7 @@ export const {
     changeFilterString,
     changeQueryType,
     changeBeetsQuery,
+    changeResultSelected,
 } = querySlice.actions;
 
 // Thunks
@@ -93,5 +98,8 @@ export const selectResults = (state) =>
 export const selectQueryState = (state) => state.query.queryState;
 export const selectQueryType = (state) => state.query.queryType;
 export const selectBeetsQuery = (state) => state.query.beetsQuery;
+export const selectResultSelected = (state) => state.query.resultSelected;
+export const selectChosenResult = (state) =>
+    state.query.results.find((r) => r.id === state.query.resultSelected);
 
 export default querySlice.reducer;
