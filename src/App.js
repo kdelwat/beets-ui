@@ -1,6 +1,6 @@
 import React from "react";
-import { Albums } from "./features/albums/Albums";
 import { Heading, Pane } from "evergreen-ui";
+import { Query } from "./features/query/Query";
 
 function App() {
     return (
@@ -22,7 +22,7 @@ function App() {
                 </Pane>
             </Pane>
             <Pane width="100%" padding={16}>
-                <Albums />
+                <Query />
             </Pane>
         </Pane>
     );

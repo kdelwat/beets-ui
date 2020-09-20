@@ -1,10 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
-import albumsReducer from "../features/albums/albumsSlice";
+import { configureStore } from "@reduxjs/toolkit";
+import queryReducer from "../features/query/querySlice";
 
 export default configureStore({
-  reducer: {
-    counter: counterReducer,
-    albums: albumsReducer
-  },
+    reducer: {
+        query: queryReducer,
+    },
 });
