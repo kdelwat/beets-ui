@@ -12,6 +12,7 @@ export const QueryType = {
 };
 
 export const QueryState = {
+    NOT_RUN: "NOT_RUN",
     LOADING: "LOADING",
     ERROR: "ERROR",
     SUCCESS: "SUCCESS",
@@ -40,7 +41,12 @@ export const querySlice = createSlice({
                 (r) => !action.payload.includes(r.id)
             );
         },
-
+        clearQuery: (state) => {
+            state.results = [];
+            state.resultSelected = [];
+            state.filterString = null;
+            state.queryState = { type: QueryState.NOT_RUN };
+        },
         loadError: (state, action) => {
             state.queryState = {
                 type: QueryState.ERROR,
@@ -69,6 +75,7 @@ export const {
     resultsLoaded,
     resultsDeleted,
     loadError,
+    clearQuery,
     changeFilterString,
     changeNextQueryType,
     changeBeetsQuery,

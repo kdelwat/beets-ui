@@ -10,6 +10,7 @@ import {
     Paragraph,
     SearchInput,
     Select,
+    Switch,
     Table,
 } from "evergreen-ui";
 import {
@@ -18,6 +19,7 @@ import {
     changeFilterString,
     changeNextQueryType,
     changeResultSelected,
+    clearQuery,
     deleteResults,
     fetchResults,
     QueryState,
@@ -54,7 +56,7 @@ export function Query() {
 
     return (
         <Pane>
-            <Pane>
+            <Pane marginBottom={24}>
                 <Select
                     value={nextQueryType}
                     onChange={(event) =>
@@ -79,19 +81,50 @@ export function Query() {
                 </Button>
             </Pane>
 
-            <Pane>
-                <Button onClick={() => dispatch(deleteResults())}>
-                    Remove all
-                </Button>
+            <hr />
 
-                <Checkbox
-                    label="Also delete files on disk"
-                    checked={deleteOnDisk}
-                    onChange={(e) =>
-                        dispatch(changeDeleteOnDisk(e.target.checked))
-                    }
-                />
-            </Pane>
+            {loadingState.type === QueryState.SUCCESS && (
+                <Pane marginBottom={24} paddingY={16}>
+                    <Paragraph>
+                        Query returned {results.length} results.
+                    </Paragraph>
+
+                    <Pane
+                        display={"flex"}
+                        flexDirection={"row"}
+                        alignItems={"center"}
+                    >
+                        <Button
+                            onClick={() => dispatch(deleteResults())}
+                            marginRight={16}
+                            intent={"danger"}
+                        >
+                            Remove all
+                        </Button>
+
+                        <Checkbox
+                            label="Also delete files on disk"
+                            checked={deleteOnDisk}
+                            onChange={(e) =>
+                                dispatch(changeDeleteOnDisk(e.target.checked))
+                            }
+                        />
+                    </Pane>
+
+                    <Pane
+                        display={"flex"}
+                        flexDirection={"row"}
+                        alignItems={"center"}
+                    >
+                        <Button
+                            onClick={() => dispatch(clearQuery())}
+                            marginRight={16}
+                        >
+                            Clear query
+                        </Button>
+                    </Pane>
+                </Pane>
+            )}
 
             {loadingState.type === QueryState.ERROR ? (
                 <Alert intent="danger" title={loadingState.error} />
