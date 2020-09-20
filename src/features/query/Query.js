@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import {
     Alert,
     Button,
+    Checkbox,
     Dialog,
     Heading,
     Pane,
@@ -13,14 +14,17 @@ import {
 } from "evergreen-ui";
 import {
     changeBeetsQuery,
+    changeDeleteOnDisk,
     changeFilterString,
-    changeQueryType,
+    changeNextQueryType,
     changeResultSelected,
+    deleteResults,
     fetchResults,
     QueryState,
     QueryType,
     selectBeetsQuery,
     selectChosenResult,
+    selectNextQueryType,
     selectQueryState,
     selectQueryType,
     selectResults,
@@ -39,8 +43,10 @@ export function Query() {
     const results = useSelector(selectResults);
     const loadingState = useSelector(selectQueryState);
     const queryType = useSelector(selectQueryType);
+    const nextQueryType = useSelector(selectNextQueryType);
     const beetsQuery = useSelector(selectBeetsQuery);
     const chosenResult = useSelector(selectChosenResult);
+    const deleteOnDisk = useSelector((state) => state.query.deleteOnDisk);
 
     const dispatch = useDispatch();
 
@@ -48,29 +54,44 @@ export function Query() {
 
     return (
         <Pane>
-            <Select
-                value={queryType}
-                onChange={(event) =>
-                    dispatch(changeQueryType(event.target.value))
-                }
-            >
-                <option value="QUERY_ALBUMS" selected>
-                    Albums
-                </option>
-                <option value="QUERY_TRACKS">Tracks</option>
-            </Select>
+            <Pane>
+                <Select
+                    value={nextQueryType}
+                    onChange={(event) =>
+                        dispatch(changeNextQueryType(event.target.value))
+                    }
+                >
+                    <option value="QUERY_ALBUMS" selected>
+                        Albums
+                    </option>
+                    <option value="QUERY_TRACKS">Tracks</option>
+                </Select>
 
-            <SearchInput
-                placeholder="Beets query..."
-                value={beetsQuery}
-                onChange={(event) =>
-                    dispatch(changeBeetsQuery(event.target.value))
-                }
-            />
+                <SearchInput
+                    placeholder="Beets query..."
+                    value={beetsQuery}
+                    onChange={(event) =>
+                        dispatch(changeBeetsQuery(event.target.value))
+                    }
+                />
+                <Button onClick={() => dispatch(fetchResults())}>
+                    Run query
+                </Button>
+            </Pane>
 
-            <Button marginRight={16} onClick={() => dispatch(fetchResults())}>
-                Run query
-            </Button>
+            <Pane>
+                <Button onClick={() => dispatch(deleteResults())}>
+                    Remove all
+                </Button>
+
+                <Checkbox
+                    label="Also delete files on disk"
+                    checked={deleteOnDisk}
+                    onChange={(e) =>
+                        dispatch(changeDeleteOnDisk(e.target.checked))
+                    }
+                />
+            </Pane>
 
             {loadingState.type === QueryState.ERROR ? (
                 <Alert intent="danger" title={loadingState.error} />
