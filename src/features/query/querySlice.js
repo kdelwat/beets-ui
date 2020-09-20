@@ -17,6 +17,7 @@ export const querySlice = createSlice({
     initialState: {
         queryType: QueryType.QUERY_ALBUMS,
         queryState: { type: QueryState.LOADING },
+        beetsQuery: "",
         results: [],
         filterString: null,
     },
@@ -38,6 +39,9 @@ export const querySlice = createSlice({
             state.queryType = action.payload;
             state.results = [];
         },
+        changeBeetsQuery: (state, action) => {
+            state.beetsQuery = action.payload;
+        },
     },
 });
 
@@ -46,6 +50,7 @@ export const {
     loadError,
     changeFilterString,
     changeQueryType,
+    changeBeetsQuery,
 } = querySlice.actions;
 
 // Thunks
@@ -57,9 +62,9 @@ export const fetchResults = () => {
 
             let results;
             if (state.query.queryType === QueryType.QUERY_ALBUMS) {
-                results = await getAlbums();
+                results = await getAlbums(state.query.beetsQuery);
             } else {
-                results = await getTracks();
+                results = await getTracks(state.query.beetsQuery);
             }
 
             dispatch(resultsLoaded(results));
@@ -87,5 +92,6 @@ export const selectResults = (state) =>
 
 export const selectQueryState = (state) => state.query.queryState;
 export const selectQueryType = (state) => state.query.queryType;
+export const selectBeetsQuery = (state) => state.query.beetsQuery;
 
 export default querySlice.reducer;
