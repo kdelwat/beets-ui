@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getSettings, settingsChanged } from "../global/globalSlice";
 
 export const settingsSlice = createSlice({
     name: "settings",
@@ -23,6 +24,26 @@ export const settingsSlice = createSlice({
         },
     },
 });
+
+export const loadSettings = () => {
+    return async (dispatch) => {
+        try {
+            const settings = getSettings();
+
+            dispatch(changeUrl(settings.settings.url));
+
+            if (settings.settings.basicAuth) {
+                dispatch(changeBasicAuthEnabled(true));
+                dispatch(changePassword(settings.settings.password));
+                dispatch(changeUsername(settings.settings.username));
+            } else {
+                dispatch(changeBasicAuthEnabled(false));
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+};
 
 export const {
     changeUrl,

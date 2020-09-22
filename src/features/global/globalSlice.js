@@ -14,11 +14,22 @@ export const globalSlice = createSlice({
                 state: SettingsState.PRESENT,
                 settings: action.payload.settings,
             };
+            state.showSettings = false;
+        },
+        showSettingsDialog: (state) => {
+            state.showSettings = true;
+        },
+        hideSettingsDialog: (state) => {
+            state.showSettings = false;
         },
     },
 });
 
-export const { settingsChanged } = globalSlice.actions;
+export const {
+    settingsChanged,
+    showSettingsDialog,
+    hideSettingsDialog,
+} = globalSlice.actions;
 export const areSettingsPresent = (state) =>
     state.global.settings.state === SettingsState.PRESENT;
 
@@ -41,7 +52,7 @@ export const saveSettings = (settings) => {
 };
 
 // Store to/from local storage
-function getSettings() {
+export function getSettings() {
     const settingsJSON = localStorage.getItem("beets:settings");
 
     if (!settingsJSON) {

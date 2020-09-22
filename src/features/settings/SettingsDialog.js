@@ -7,10 +7,11 @@ import {
     changeUrl,
     changeUsername,
     isBasicAuthEnabled,
+    loadSettings,
     selectNewSettings,
     selectWipSettings,
 } from "./settingsSlice";
-import { saveSettings } from "../global/globalSlice";
+import { hideSettingsDialog, saveSettings } from "../global/globalSlice";
 
 export function SettingsDialog({ isShown, canClose }) {
     const wipSettings = useSelector(selectWipSettings);
@@ -27,6 +28,8 @@ export function SettingsDialog({ isShown, canClose }) {
             shouldCloseOnOverlayClick={canClose}
             isConfirmDisabled={!validSettings}
             onConfirm={() => dispatch(saveSettings(validSettings))}
+            onOpenComplete={() => dispatch(loadSettings())}
+            onCloseComplete={() => dispatch(hideSettingsDialog())}
         >
             <div>
                 <TextInputField
