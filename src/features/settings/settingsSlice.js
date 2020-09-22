@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getSettings, settingsChanged } from "../global/globalSlice";
+import { getSettings } from "../global/globalSlice";
 import Api from "../../api/api";
+
+export const SettingsTestStatus = {
+    SUCCESS: "SUCCESS",
+    FAILED: "FAILED",
+    NOT_RUN: "NOT_RUN",
+};
 
 export const settingsSlice = createSlice({
     name: "settings",
@@ -9,31 +15,33 @@ export const settingsSlice = createSlice({
         basicAuthEnabled: false,
         username: "",
         password: "",
-        tested: false,
-        error: null,
+        test: { status: SettingsTestStatus.NOT_RUN },
     },
     reducers: {
         changeUrl: (state, action) => {
             state.url = action.payload;
-            state.tested = false;
+            state.test = { status: SettingsTestStatus.NOT_RUN };
         },
         changeBasicAuthEnabled: (state, action) => {
             state.basicAuthEnabled = action.payload;
-            state.tested = false;
+            state.test = { status: SettingsTestStatus.NOT_RUN };
         },
         changeUsername: (state, action) => {
             state.username = action.payload;
-            state.tested = false;
+            state.test = { status: SettingsTestStatus.NOT_RUN };
         },
         changePassword: (state, action) => {
             state.password = action.payload;
-            state.tested = false;
+            state.test = { status: SettingsTestStatus.NOT_RUN };
         },
         completedTest: (state, action) => {
             if (action.payload.result) {
-                state.tested = true;
+                state.test = { status: SettingsTestStatus.SUCCESS };
             } else {
-                state.error = action.payload.err;
+                state.test = {
+                    status: SettingsTestStatus.FAILED,
+                    error: action.payload.err,
+                };
             }
         },
     },
@@ -125,11 +133,7 @@ export const selectNewSettings = (state) => {
 };
 
 export const selectTestStatus = (state) => {
-    if (state.settings.tested) {
-        return { success: true };
-    } else {
-        return { success: false, err: state.settings.err };
-    }
+    return state.settings.test;
 };
 
 export default settingsSlice.reducer;
