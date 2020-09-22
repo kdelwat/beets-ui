@@ -10,7 +10,6 @@ import {
     Paragraph,
     SearchInput,
     Select,
-    Switch,
     Table,
 } from "evergreen-ui";
 import {
@@ -31,6 +30,7 @@ import {
     selectQueryType,
     selectResults,
 } from "./querySlice";
+import KeyVal from "../../components/KeyValue";
 
 // https://stackoverflow.com/a/58061735
 const useFetching = (someFetchActionCreator) => {
@@ -242,17 +242,5 @@ function ResultDialog({ queryType, result }) {
                 <div />
             )}
         </Dialog>
-    );
-}
-
-function KeyVal({ label, value }) {
-    return (
-        <Paragraph>
-            <span style={{ "font-weight": "bold", "padding-right": "1em" }}>
-                {label}
-            </span>
-
-            {value || "Unknown"}
-        </Paragraph>
     );
 }

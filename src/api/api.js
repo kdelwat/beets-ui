@@ -30,6 +30,10 @@ export const deleteTracks = async (ids) => {
     ).then((res) => res.json());
 };
 
+export const getStats = async () => {
+    return await fetch(makeURL("/stats")).then((res) => res.json());
+};
+
 const makeURL = (selector) => {
     return "http://localhost:8337" + selector;
 };
