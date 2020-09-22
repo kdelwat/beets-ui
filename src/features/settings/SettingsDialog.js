@@ -1,5 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Checkbox, Dialog, TextInputField } from "evergreen-ui";
+import {
+    Button,
+    Checkbox,
+    Dialog,
+    Paragraph,
+    TextInputField,
+} from "evergreen-ui";
 import React from "react";
 import {
     changeBasicAuthEnabled,
@@ -9,7 +15,9 @@ import {
     isBasicAuthEnabled,
     loadSettings,
     selectNewSettings,
+    selectTestStatus,
     selectWipSettings,
+    testNewSettings,
 } from "./settingsSlice";
 import { hideSettingsDialog, saveSettings } from "../global/globalSlice";
 
@@ -17,6 +25,8 @@ export function SettingsDialog({ isShown, canClose }) {
     const wipSettings = useSelector(selectWipSettings);
     const validSettings = useSelector(selectNewSettings);
     const basicAuthEnabled = useSelector(isBasicAuthEnabled);
+    const testStatus = useSelector(selectTestStatus);
+
     const dispatch = useDispatch();
 
     return (
@@ -26,7 +36,7 @@ export function SettingsDialog({ isShown, canClose }) {
             hasClose={canClose}
             shouldCloseOnEscapePress={canClose}
             shouldCloseOnOverlayClick={canClose}
-            isConfirmDisabled={!validSettings}
+            isConfirmDisabled={!validSettings || !testStatus.success}
             onConfirm={() => dispatch(saveSettings(validSettings))}
             onOpenComplete={() => dispatch(loadSettings())}
             onCloseComplete={() => dispatch(hideSettingsDialog())}
@@ -74,6 +84,19 @@ export function SettingsDialog({ isShown, canClose }) {
                     />
                 )}
             </div>
+
+            <Button
+                disabled={!validSettings}
+                onClick={() => dispatch(testNewSettings())}
+            >
+                Test connection
+            </Button>
+
+            {testStatus.success ? (
+                <Paragraph>Connection successful</Paragraph>
+            ) : (
+                <Paragraph>Connection failed: {testStatus.err}</Paragraph>
+            )}
         </Dialog>
     );
 }

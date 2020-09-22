@@ -14,6 +14,7 @@ export const globalSlice = createSlice({
                 state: SettingsState.PRESENT,
                 settings: action.payload,
             };
+            state.showSettings = false;
         },
         showSettingsDialog: (state) => {
             state.showSettings = true;

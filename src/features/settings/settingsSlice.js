@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getSettings } from "../global/globalSlice";
+import { getSettings, settingsChanged } from "../global/globalSlice";
+import Api from "../../api/api";
 
 export const settingsSlice = createSlice({
     name: "settings",
@@ -8,19 +9,32 @@ export const settingsSlice = createSlice({
         basicAuthEnabled: false,
         username: "",
         password: "",
+        tested: false,
+        error: null,
     },
     reducers: {
         changeUrl: (state, action) => {
             state.url = action.payload;
+            state.tested = false;
         },
         changeBasicAuthEnabled: (state, action) => {
             state.basicAuthEnabled = action.payload;
+            state.tested = false;
         },
         changeUsername: (state, action) => {
             state.username = action.payload;
+            state.tested = false;
         },
         changePassword: (state, action) => {
             state.password = action.payload;
+            state.tested = false;
+        },
+        completedTest: (state, action) => {
+            if (action.payload.result) {
+                state.tested = true;
+            } else {
+                state.error = action.payload.err;
+            }
         },
     },
 });
@@ -50,6 +64,7 @@ export const {
     changeBasicAuthEnabled,
     changeUsername,
     changePassword,
+    completedTest,
 } = settingsSlice.actions;
 
 export const isBasicAuthEnabled = (state) => state.settings.basicAuthEnabled;
@@ -60,6 +75,32 @@ export const selectWipSettings = (state) => {
         basicAuthEnabled: state.settings.basicAuthEnabled,
         username: state.settings.username,
         password: state.settings.password,
+    };
+};
+
+export const testNewSettings = () => {
+    return async (dispatch, getState) => {
+        try {
+            const newSettings = selectNewSettings(getState());
+
+            const api = new Api({
+                global: { settings: { settings: newSettings } },
+            });
+
+            const stats = await api.getStats();
+
+            if (stats) {
+                dispatch(completedTest({ result: true }));
+            } else {
+                dispatch(
+                    completedTest({ result: false, err: "Could not connect" })
+                );
+            }
+        } catch (err) {
+            console.error(err);
+
+            dispatch(completedTest({ result: false, err: err.message }));
+        }
     };
 };
 
@@ -81,6 +122,14 @@ export const selectNewSettings = (state) => {
               }
             : null,
     };
+};
+
+export const selectTestStatus = (state) => {
+    if (state.settings.tested) {
+        return { success: true };
+    } else {
+        return { success: false, err: state.settings.err };
+    }
 };
 
 export default settingsSlice.reducer;
