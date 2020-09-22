@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getStats } from "../../api/api";
+import Api from "../../api/api";
 
 export const statsSlice = createSlice({
     name: "stats",
@@ -14,9 +14,9 @@ export const statsSlice = createSlice({
 export const { resultsLoaded } = statsSlice.actions;
 
 export const fetchResults = () => {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         try {
-            const results = await getStats();
+            const results = await new Api(getState()).getStats();
 
             dispatch(resultsLoaded(results));
         } catch (err) {

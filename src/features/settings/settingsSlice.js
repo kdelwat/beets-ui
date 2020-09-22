@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getSettings, settingsChanged } from "../global/globalSlice";
+import { getSettings } from "../global/globalSlice";
 
 export const settingsSlice = createSlice({
     name: "settings",

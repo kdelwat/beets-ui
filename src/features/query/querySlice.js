@@ -1,10 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-    deleteAlbums,
-    deleteTracks,
-    getAlbums,
-    getTracks,
-} from "../../api/api";
+import Api from "../../api/api";
 
 export const QueryType = {
     QUERY_ALBUMS: "QUERY_ALBUMS",
@@ -89,12 +84,13 @@ export const fetchResults = () => {
     return async (dispatch, getState) => {
         try {
             const state = getState();
+            const api = new Api(state);
 
             let results;
             if (state.query.nextQueryType === QueryType.QUERY_ALBUMS) {
-                results = await getAlbums(state.query.beetsQuery);
+                results = await api.getAlbums(state.query.beetsQuery);
             } else {
-                results = await getTracks(state.query.beetsQuery);
+                results = await api.getTracks(state.query.beetsQuery);
             }
 
             dispatch(resultsLoaded(results));
@@ -110,17 +106,18 @@ export const deleteResults = () => {
     return async (dispatch, getState) => {
         try {
             const state = getState();
+            const api = new Api(state);
 
             const idsToDelete = state.query.results.map((r) => r.id);
 
             let result;
             if (state.query.nextQueryType === QueryType.QUERY_ALBUMS) {
-                result = await deleteAlbums(
+                result = await api.deleteAlbums(
                     idsToDelete,
                     state.query.deleteOnDisk
                 );
             } else {
-                result = await deleteTracks(
+                result = await api.deleteTracks(
                     idsToDelete,
                     state.query.deleteOnDisk
                 );
