@@ -2,8 +2,17 @@ import React from "react";
 import { Heading, Pane } from "evergreen-ui";
 import { Query } from "./features/query/Query";
 import { Stats } from "./features/stats/Stats";
+import { SettingsDialog } from "./features/settings/SettingsDialog";
+import { useSelector } from "react-redux";
+import {
+    areSettingsPresent,
+    shouldShowSettings,
+} from "./features/global/globalSlice";
 
 function App() {
+    const showSettings = useSelector(shouldShowSettings);
+    const settingsPresent = useSelector(areSettingsPresent);
+
     return (
         <Pane
             display="flex"
@@ -28,6 +37,8 @@ function App() {
             <Pane width="100%" padding={16}>
                 <Query />
             </Pane>
+
+            <SettingsDialog isShown={showSettings} canClose={settingsPresent} />
         </Pane>
     );
 }
