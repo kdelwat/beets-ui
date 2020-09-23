@@ -34,7 +34,7 @@ function App() {
                     <Heading size={600}>Beets UI</Heading>
                 </Pane>
                 <Pane display={"flex"}>
-                    <Stats />
+                    {settingsPresent && <Stats />}
                     <Button
                         onClick={() => dispatch(showSettingsDialog())}
                         marginLeft={16}
@@ -45,7 +45,7 @@ function App() {
             </Pane>
 
             <Pane width="100%" padding={16}>
-                <Query />
+                {settingsPresent && <Query />}
             </Pane>
 
             <SettingsDialog isShown={showSettings} canClose={settingsPresent} />

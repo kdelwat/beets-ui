@@ -38,6 +38,10 @@ export default class Api {
     };
 
     makeRequest = async (path, method) => {
+        if (!this.settings) {
+            throw new Error("Settings not yet initialised");
+        }
+
         method = method || "GET";
 
         return fetch(this.settings.url + path, {
