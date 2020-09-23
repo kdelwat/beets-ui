@@ -44,7 +44,7 @@ const useFetching = (someFetchActionCreator) => {
 
 export function Query() {
     const results = useSelector(selectResults);
-    const loadingState = useSelector(selectQueryState);
+    const queryState = useSelector(selectQueryState);
     const queryType = useSelector(selectQueryType);
     const nextQueryType = useSelector(selectNextQueryType);
     const beetsQuery = useSelector(selectBeetsQuery);
@@ -79,8 +79,8 @@ export function Query() {
                 />
                 <Button
                     onClick={() => dispatch(fetchResults())}
-                    disabled={loadingState.type === QueryState.LOADING}
-                    isLoading={loadingState.type === QueryState.LOADING}
+                    disabled={queryState.state === QueryState.LOADING}
+                    isLoading={queryState.state === QueryState.LOADING}
                 >
                     Run query
                 </Button>
@@ -88,7 +88,7 @@ export function Query() {
 
             <hr />
 
-            {loadingState.type === QueryState.SUCCESS && (
+            {queryState.state === QueryState.SUCCESS && (
                 <Pane marginBottom={24} paddingBottom={16}>
                     <Alert
                         intent="success"
@@ -132,37 +132,33 @@ export function Query() {
                 </Pane>
             )}
 
-            <QueryResult
-                loadingState={loadingState}
-                queryType={queryType}
-                results={results}
-            />
+            <QueryResult queryState={queryState} />
 
             <ResultDialog result={chosenResult} queryType={queryType} />
         </Pane>
     );
 }
 
-function QueryResult({ loadingState, queryType, results }) {
-    switch (loadingState.type) {
+function QueryResult({ queryState }) {
+    switch (queryState.state) {
         case QueryState.LOADING:
             return <Alert intent="none" title={"Running query..."} />;
         case QueryState.ERROR:
-            return <Alert intent="danger" title={loadingState.error} />;
+            return <Alert intent="danger" title={queryState.error} />;
         case QueryState.SUCCESS:
             return (
                 <Table>
                     <TableHeader
                         labels={
-                            queryType === QueryType.QUERY_ALBUMS
+                            queryState.resultType === QueryType.QUERY_ALBUMS
                                 ? ["Artist", "Year"]
                                 : ["Artist", "Album", "Year"]
                         }
                     />
 
                     <Table.Body>
-                        {results.map((album) =>
-                            queryType === QueryType.QUERY_ALBUMS ? (
+                        {queryState.results.map((album) =>
+                            queryState.resultType === QueryType.QUERY_ALBUMS ? (
                                 <AlbumRow key={album.id} album={album} />
                             ) : (
                                 <TrackRow key={album.id} track={album} />

@@ -16,36 +16,43 @@ export const QueryState = {
 export const querySlice = createSlice({
     name: "query",
     initialState: {
-        queryType: QueryType.QUERY_ALBUMS,
-        nextQueryType: QueryType.QUERY_ALBUMS,
-        queryState: { type: QueryState.LOADING },
+        queryState: {
+            state: QueryState.LOADING,
+            resultType: QueryType.QUERY_ALBUMS,
+        },
         beetsQuery: "",
-        results: [],
+        nextQueryType: QueryType.QUERY_ALBUMS,
         resultSelected: null,
         filterString: null,
         deleteOnDisk: true,
     },
     reducers: {
         resultsLoaded: (state, action) => {
-            state.results = action.payload;
-            state.queryState = { type: QueryState.SUCCESS };
-            state.queryType = state.nextQueryType;
+            state.queryState = {
+                state: QueryState.SUCCESS,
+                results: action.payload,
+                resultType: state.nextQueryType,
+            };
         },
         resultsDeleted: (state, action) => {
-            state.results = state.results.filter(
+            state.queryState.results = state.queryState.results.filter(
                 (r) => !action.payload.includes(r.id)
             );
         },
         clearQuery: (state) => {
-            state.results = [];
-            state.resultSelected = [];
+            state.resultSelected = null;
             state.filterString = null;
-            state.queryState = { type: QueryState.NOT_RUN };
+            state.queryState = { state: QueryState.NOT_RUN };
         },
         loadError: (state, action) => {
             state.queryState = {
-                type: QueryState.ERROR,
+                state: QueryState.ERROR,
                 error: action.payload,
+            };
+        },
+        startLoading: (state, action) => {
+            state.queryState = {
+                state: QueryState.LOADING,
             };
         },
         changeFilterString: (state, action) => {
@@ -76,6 +83,7 @@ export const {
     changeBeetsQuery,
     changeResultSelected,
     changeDeleteOnDisk,
+    startLoading,
 } = querySlice.actions;
 
 // Thunks
@@ -83,6 +91,8 @@ export const {
 export const fetchResults = () => {
     return async (dispatch, getState) => {
         try {
+            dispatch(startLoading());
+
             const state = getState();
             const api = new Api(state);
 
@@ -108,7 +118,7 @@ export const deleteResults = () => {
             const state = getState();
             const api = new Api(state);
 
-            const idsToDelete = state.query.results.map((r) => r.id);
+            const idsToDelete = state.query.queryState.results.map((r) => r.id);
 
             let result;
             if (state.query.nextQueryType === QueryType.QUERY_ALBUMS) {
@@ -138,24 +148,29 @@ export const deleteResults = () => {
 
 // Selectors
 export const selectResults = (state) =>
-    state.query.filterString
-        ? state.query.results.filter(
-              (a) =>
-                  a.album
-                      .toLowerCase()
-                      .includes(state.query.filterString.toLowerCase()) ||
-                  a.albumartist
-                      .toLowerCase()
-                      .includes(state.query.filterString.toLowerCase())
-          )
-        : state.query.results;
+    state.query.queryState.state === QueryState.SUCCESS
+        ? state.query.filterString
+            ? state.query.queryState.results.filter(
+                  (a) =>
+                      a.album
+                          .toLowerCase()
+                          .includes(state.query.filterString.toLowerCase()) ||
+                      a.albumartist
+                          .toLowerCase()
+                          .includes(state.query.filterString.toLowerCase())
+              )
+            : state.query.queryState.results
+        : null;
 
 export const selectQueryState = (state) => state.query.queryState;
-export const selectQueryType = (state) => state.query.queryType;
+export const selectQueryType = (state) => state.query.queryState.resultType;
 export const selectNextQueryType = (state) => state.query.nextQueryType;
 export const selectBeetsQuery = (state) => state.query.beetsQuery;
-export const selectResultSelected = (state) => state.query.resultSelected;
 export const selectChosenResult = (state) =>
-    state.query.results.find((r) => r.id === state.query.resultSelected);
+    state.query.queryState.state === QueryState.SUCCESS
+        ? state.query.queryState.results.find(
+              (r) => r.id === state.query.resultSelected
+          )
+        : null;
 
 export default querySlice.reducer;
