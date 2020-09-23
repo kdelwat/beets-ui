@@ -13,9 +13,11 @@ Features:
 
 ## For users
 
-Beets UI is a simple client-side webapp. When you first use it, you will be asked to provide the URL of a running instance of the Beets web API.
+Beets UI is a simple client-side webapp. When you first use it, you will be asked to provide the URL of a running instance of the Beets web API, which you need to host yourself.
 
-### Tips
+You can access this webapp at [beets-ui.cadel.me](http://beets-ui.cadel.me/).
+
+### Tips for hosting the API
 
 To enable the Beets web API on the default port, use this Beets config:
 
@@ -86,6 +88,14 @@ server {
     ssl_prefer_server_ciphers off;
 }
 ```
+
+## For self-hosters
+
+To self host the webapp, follow the build instructions in the "For developers section" and then read the
+[Deployment guide](https://create-react-app.dev/docs/deployment) from the `create-react-app` docs.
+
+All you really need to do is statically serve the files generated into the `build` folder.
+
 ## For developers
 
 In the project directory, you can run:
