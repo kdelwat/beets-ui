@@ -33,9 +33,12 @@ function App() {
                 <Pane flex={1} alignItems="center" display="flex">
                     <Heading size={600}>Beets UI</Heading>
                 </Pane>
-                <Pane>
+                <Pane display={"flex"}>
                     <Stats />
-                    <Button onClick={() => dispatch(showSettingsDialog())}>
+                    <Button
+                        onClick={() => dispatch(showSettingsDialog())}
+                        marginLeft={16}
+                    >
                         Settings
                     </Button>
                 </Pane>

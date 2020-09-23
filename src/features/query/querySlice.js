@@ -57,7 +57,7 @@ export const querySlice = createSlice({
                 warnings:
                     state.beetsQuery === ""
                         ? [
-                              "This query could return many results and take a while. Try making it more specific before searching.",
+                              "This query may take a long time. Try making it more specific before searching.",
                           ]
                         : [],
             };

@@ -7,10 +7,8 @@ import {
     Dialog,
     Heading,
     Pane,
-    Paragraph,
     SearchInput,
     Select,
-    Spinner,
     Table,
 } from "evergreen-ui";
 import {
@@ -76,6 +74,7 @@ export function Query() {
                     onChange={(event) =>
                         dispatch(changeBeetsQuery(event.target.value))
                     }
+                    marginRight={8}
                 />
                 <Button
                     onClick={() => dispatch(fetchResults())}
@@ -89,33 +88,11 @@ export function Query() {
             <hr />
 
             {queryState.state === QueryState.SUCCESS && (
-                <Pane marginBottom={24} paddingBottom={16}>
+                <Pane paddingBottom={16}>
                     <Alert
                         intent="success"
                         title={"Query returned " + results.length + " results."}
                     />
-
-                    <Pane
-                        display={"flex"}
-                        flexDirection={"row"}
-                        alignItems={"center"}
-                    >
-                        <Button
-                            onClick={() => dispatch(deleteResults())}
-                            marginRight={16}
-                            intent={"danger"}
-                        >
-                            Remove all
-                        </Button>
-
-                        <Checkbox
-                            label="Also delete files on disk"
-                            checked={deleteOnDisk}
-                            onChange={(e) =>
-                                dispatch(changeDeleteOnDisk(e.target.checked))
-                            }
-                        />
-                    </Pane>
 
                     <Pane
                         display={"flex"}
@@ -128,6 +105,29 @@ export function Query() {
                         >
                             Clear query
                         </Button>
+                        <Pane
+                            display={"flex"}
+                            flexDirection={"row"}
+                            alignItems={"center"}
+                        >
+                            <Button
+                                onClick={() => dispatch(deleteResults())}
+                                marginRight={16}
+                                intent={"danger"}
+                            >
+                                Remove all
+                            </Button>
+
+                            <Checkbox
+                                label="Also delete files on disk"
+                                checked={deleteOnDisk}
+                                onChange={(e) =>
+                                    dispatch(
+                                        changeDeleteOnDisk(e.target.checked)
+                                    )
+                                }
+                            />
+                        </Pane>
                     </Pane>
                 </Pane>
             )}
@@ -146,7 +146,12 @@ function QueryResult({ queryState }) {
                 <Fragment>
                     <Alert intent="none" title={"Running query..."} />
                     {queryState.warnings.map((warn, key) => (
-                        <Alert key={key} intent="warning" title={warn} />
+                        <Alert
+                            key={key}
+                            intent="warning"
+                            title={warn}
+                            marginTop={8}
+                        />
                     ))}
                 </Fragment>
             );
