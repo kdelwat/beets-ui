@@ -15,7 +15,7 @@ Features:
 
 Beets UI is a simple client-side webapp. When you first use it, you will be asked to provide the URL of a running instance of the Beets web API, which you need to host yourself.
 
-You can access this webapp at [beets-ui.cadel.me](http://beets-ui.cadel.me/).
+You can access this webapp at [beets-ui.cadel.me](https://beets-ui.cadel.me/).
 
 ### Tips for hosting the API
 
