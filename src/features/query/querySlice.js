@@ -154,21 +154,38 @@ export const deleteResults = () => {
 };
 
 // Selectors
-export const selectResults = (state) =>
-    state.query.queryState.state === QueryState.SUCCESS
-        ? state.query.filterString
-            ? state.query.queryState.results.filter(
-                  (a) =>
-                      a.album
-                          .toLowerCase()
-                          .includes(state.query.filterString.toLowerCase()) ||
-                      a.albumartist
-                          .toLowerCase()
-                          .includes(state.query.filterString.toLowerCase())
-              )
-            : state.query.queryState.results
-        : null;
+export const selectResults = (state) => {
+    if (state.query.queryState.state !== QueryState.SUCCESS) {
+        return null;
+    }
 
+    return state.query.filterString
+        ? state.query.queryState.results.filter((r) =>
+              applyFilterString(
+                  r,
+                  state.query.filterString.toLowerCase(),
+                  state.query.queryState.resultType
+              )
+          )
+        : state.query.queryState.results;
+};
+
+const applyFilterString = (result, filterString, resultType) => {
+    switch (resultType) {
+        case QueryType.QUERY_ALBUMS:
+            return (
+                result.album.toLowerCase().includes(filterString) ||
+                result.albumartist.toLowerCase().includes(filterString)
+            );
+        case QueryType.QUERY_TRACKS:
+        default:
+            return (
+                result.album.toLowerCase().includes(filterString) ||
+                result.artist.toLowerCase().includes(filterString) ||
+                result.title.toLowerCase().includes(filterString)
+            );
+    }
+};
 export const selectQueryState = (state) => state.query.queryState;
 export const selectQueryType = (state) => state.query.queryState.resultType;
 export const selectNextQueryType = (state) => state.query.nextQueryType;
