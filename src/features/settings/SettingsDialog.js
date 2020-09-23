@@ -9,7 +9,7 @@ import {
     TextInputField,
     TickCircleIcon,
 } from "evergreen-ui";
-import React, { Fragment } from "react";
+import React from "react";
 import {
     changeBasicAuthEnabled,
     changePassword,
@@ -125,6 +125,6 @@ function TestResult({ status }) {
             );
         case SettingsTestStatus.NOT_RUN:
         default:
-            return <Paragraph></Paragraph>;
+            return <Paragraph/>;
     }
 }
