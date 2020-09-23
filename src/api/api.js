@@ -42,14 +42,14 @@ export default class Api {
 
         return fetch(this.settings.url + path, {
             method: method,
-            headers: this.settings.basicAuthEnabled
+            headers: this.settings.basicAuth
                 ? {
                       Authorization:
                           "Basic " +
                           btoa(
-                              this.settings.username +
+                              this.settings.basicAuth.username +
                                   ":" +
-                                  this.settings.password
+                                  this.settings.basicAuth.password
                           ),
                   }
                 : {},
