@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
 import {
     Alert,
     Button,
@@ -10,6 +10,7 @@ import {
     Paragraph,
     SearchInput,
     Select,
+    Spinner,
     Table,
 } from "evergreen-ui";
 import {
@@ -76,7 +77,11 @@ export function Query() {
                         dispatch(changeBeetsQuery(event.target.value))
                     }
                 />
-                <Button onClick={() => dispatch(fetchResults())}>
+                <Button
+                    onClick={() => dispatch(fetchResults())}
+                    disabled={loadingState.type === QueryState.LOADING}
+                    isLoading={loadingState.type === QueryState.LOADING}
+                >
                     Run query
                 </Button>
             </Pane>
@@ -84,10 +89,11 @@ export function Query() {
             <hr />
 
             {loadingState.type === QueryState.SUCCESS && (
-                <Pane marginBottom={24} paddingY={16}>
-                    <Paragraph>
-                        Query returned {results.length} results.
-                    </Paragraph>
+                <Pane marginBottom={24} paddingBottom={16}>
+                    <Alert
+                        intent="success"
+                        title={"Query returned " + results.length + " results."}
+                    />
 
                     <Pane
                         display={"flex"}
@@ -126,9 +132,25 @@ export function Query() {
                 </Pane>
             )}
 
-            {loadingState.type === QueryState.ERROR ? (
-                <Alert intent="danger" title={loadingState.error} />
-            ) : (
+            <QueryResult
+                loadingState={loadingState}
+                queryType={queryType}
+                results={results}
+            />
+
+            <ResultDialog result={chosenResult} queryType={queryType} />
+        </Pane>
+    );
+}
+
+function QueryResult({ loadingState, queryType, results }) {
+    switch (loadingState.type) {
+        case QueryState.LOADING:
+            return <Alert intent="none" title={"Running query..."} />;
+        case QueryState.ERROR:
+            return <Alert intent="danger" title={loadingState.error} />;
+        case QueryState.SUCCESS:
+            return (
                 <Table>
                     <TableHeader
                         labels={
@@ -148,11 +170,16 @@ export function Query() {
                         )}
                     </Table.Body>
                 </Table>
-            )}
-
-            <ResultDialog result={chosenResult} queryType={queryType} />
-        </Pane>
-    );
+            );
+        case QueryState.NOT_RUN:
+        default:
+            return (
+                <Alert
+                    intent="none"
+                    title={"Enter a query above to see results"}
+                />
+            );
+    }
 }
 
 function TableHeader({ labels }) {
