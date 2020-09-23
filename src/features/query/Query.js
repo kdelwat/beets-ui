@@ -142,7 +142,14 @@ export function Query() {
 function QueryResult({ queryState }) {
     switch (queryState.state) {
         case QueryState.LOADING:
-            return <Alert intent="none" title={"Running query..."} />;
+            return (
+                <Fragment>
+                    <Alert intent="none" title={"Running query..."} />
+                    {queryState.warnings.map((warn, key) => (
+                        <Alert key={key} intent="warning" title={warn} />
+                    ))}
+                </Fragment>
+            );
         case QueryState.ERROR:
             return <Alert intent="danger" title={queryState.error} />;
         case QueryState.SUCCESS:

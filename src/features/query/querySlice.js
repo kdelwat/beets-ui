@@ -18,6 +18,7 @@ export const querySlice = createSlice({
     initialState: {
         queryState: {
             state: QueryState.LOADING,
+            warnings: [],
             resultType: QueryType.QUERY_ALBUMS,
         },
         beetsQuery: "",
@@ -53,6 +54,12 @@ export const querySlice = createSlice({
         startLoading: (state, action) => {
             state.queryState = {
                 state: QueryState.LOADING,
+                warnings:
+                    state.beetsQuery === ""
+                        ? [
+                              "This query could return many results and take a while. Try making it more specific before searching.",
+                          ]
+                        : [],
             };
         },
         changeFilterString: (state, action) => {
